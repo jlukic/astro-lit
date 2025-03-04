@@ -22,8 +22,8 @@
   "exports": {
     ".": "./dist/index.js",
     "./server.js": {
-      "default": "./server.js",
-      "types": "./server.d.ts"
+      "types": "./server.d.ts",
+      "default": "./server.js"
     },
     "./client-shim.js": "./client-shim.js",
     "./dist/client.js": "./dist/client.js",
