@@ -41,10 +41,8 @@ function* render(Component, attrs, slots) {
 
 	if (attrs) {
 		for (let [name, value] of Object.entries(attrs)) {
-			// Check if Ctr exists and has prototype and elementProperties
-			const isReactiveProperty = Ctr && Ctr.prototype && name in Ctr.prototype;
-			const isReflectedReactiveProperty = Ctr && Ctr.elementProperties && 
-				Ctr.elementProperties.get(name)?.reflect;
+			const isReactiveProperty = name in Ctr.prototype;
+			const isReflectedReactiveProperty = Ctr.elementProperties.get(name)?.reflect;
 
 			// Only defer hydration if we are setting a reactive property that cannot
 			// be reflected / serialized as a property.
@@ -64,17 +62,17 @@ function* render(Component, attrs, slots) {
 	yield* instance.renderAttributes();
 	yield `>`;
 	
-	// Ensure all required stacks are initialized
-	const renderInfo = {
+	// render component
+	// see: https://github.com/lit/lit/blob/a66737fc9b861999b00ccad01edb925172b7f711/packages/labs/ssr-react/src/lib/node/render-custom-element.ts#L32
+	const shadowContents = instance.renderShadow({
 		elementRenderers: [LitElementRenderer],
 		customElementInstanceStack: [instance],
 		customElementHostStack: [instance],
 		deferHydration: false,
 		eventTargetStack: [],
 		slotStack: []
-	};
-	
-	const shadowContents = instance.renderShadow(renderInfo);
+	});
+
 	if (shadowContents !== undefined) {
 		const { mode = 'open', delegatesFocus } = instance.shadowRootOptions ?? {};
 		// `delegatesFocus` is intentionally allowed to coerce to boolean to
